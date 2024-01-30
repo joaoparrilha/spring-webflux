@@ -1,18 +1,24 @@
 package com.webflux.tasks.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import com.webflux.tasks.model.Task;
+import com.webflux.tasks.repositories.TaskCustomRepository;
+import com.webflux.tasks.repositories.TaskRepository;
 
 import reactor.core.publisher.Mono;
 
 @Service
 public class TaskService {
 	
-	public static List<Task> taskList = new ArrayList<>();
+	private final TaskRepository taskRepository;
+	private final TaskCustomRepository taskCustomRepository;
+	
+	public TaskService(TaskRepository taskRepository, TaskCustomRepository taskCustomRepository) {
+		this.taskRepository = taskRepository;
+		this.taskCustomRepository = taskCustomRepository;
+	}
 	
 	public Mono<Task> insert(Task task){
 		return Mono.just(task)
@@ -20,12 +26,16 @@ public class TaskService {
 				.flatMap(this::save);
 	}
 	
-	public Mono<List<Task>> list(){
-		return Mono.just(taskList);
+	public Page<Task> findPaginated(Task task, Integer pageNumber, Integer pageSize){
+		return taskCustomRepository.findPaginated(task, pageNumber, pageSize);
 	}
 	
 	private Mono<Task> save(Task task){
 		return Mono.just(task)
-				.map(Task::newTask);
+				.map(taskRepository::save);
+	}
+	
+	public Mono<Void>deleteById(String id){
+		return Mono.fromRunnable(()->taskRepository.deleteById(id));
 	}
 }

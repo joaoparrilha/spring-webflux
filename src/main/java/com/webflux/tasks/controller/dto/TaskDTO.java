@@ -4,12 +4,20 @@ import com.webflux.tasks.model.TaskState;
 
 public class TaskDTO {
 	
+	private String id;
 	private String title;
 	private String description;
 	private int priority;
 	private TaskState state;
 	public String getTitle() {
 		return title;
+	}
+		
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
 	}
 	public void setTitle(String title) {
 		this.title = title;
